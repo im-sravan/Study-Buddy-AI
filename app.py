@@ -5,7 +5,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-import google.generativeai as genai
+#import google.generativeai as genai
 import markdown as md
 from dotenv import load_dotenv
 
@@ -20,7 +20,7 @@ GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 app = Flask(__name__)
 app.secret_key = "study_buddy_secret_key_change_this"
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'uploads')
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  #2MB
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'studybuddy.db')
