@@ -7,6 +7,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import google.generativeai as genai
 import markdown as md
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # ====== CONFIG =======
 # Prefer reading the API key from the environment so it's easy to rotate/update
