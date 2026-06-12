@@ -1,0 +1,4 @@
+studybuddy.db
+__pycache__/
+.env
+uploads/
