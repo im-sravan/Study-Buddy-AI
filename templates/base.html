@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Study Buddy AI{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="brand">
+                <span class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                <span class="brand-text">Study Buddy <small>AI</small></span>
+            </div>
+            <nav class="nav-links">
+                <a href="{{ url_for('profile') }}" class="nav-item {% if request.path=='/profile' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-user"></i></span> Profile
+                </a>
+                <a href="{{ url_for('settings') }}" class="nav-item {% if request.path=='/settings' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-gear"></i></span> Settings
+                </a>
+                <div class="nav-divider"></div>
+                <a href="{{ url_for('chat_assistant') }}" class="nav-item {% if request.path=='/chat-assistant' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-comments"></i></span> Chat Assistant
+                </a>
+                <a href="{{ url_for('academic_query') }}" class="nav-item {% if request.path=='/academic-query' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-book-open"></i></span> Academic Query
+                </a>
+                <a href="{{ url_for('study_planner') }}" class="nav-item {% if '/study-planner' in request.path %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span> Study Planner
+                </a>
+                <a href="{{ url_for('career_guidance') }}" class="nav-item {% if request.path=='/career-guidance' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-rocket"></i></span> Career Guidance
+                </a>
+            </nav>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('home') }}" class="nav-item {% if request.path=='/home' %}active{% endif %}">
+                <span class="nav-icon"><i class="fa-solid fa-house"></i></span> Home
+            </a>
+            <a href="{{ url_for('logout') }}" class="nav-item logout-link">
+                <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span> Log out
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</div>
+{% block extra_js %}{% endblock %}
+<script>
+(function() {
+    var storedTheme = localStorage.getItem('studybuddy_theme');
+    var theme = storedTheme === 'dark' ? 'dark' : 'light';
+
+    function applyTheme(selected) {
+        if (selected === 'dark') {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    }
+
+    window.setStudyBuddyTheme = function(selected) {
+        if (selected !== 'light' && selected !== 'dark') return;
+        localStorage.setItem('studybuddy_theme', selected);
+        applyTheme(selected);
+        var lightRadio = document.getElementById('theme-light');
+        var darkRadio = document.getElementById('theme-dark');
+        if (lightRadio) lightRadio.checked = selected === 'light';
+        if (darkRadio) darkRadio.checked = selected === 'dark';
+    };
+
+    applyTheme(theme);
+
+    var lightRadio = document.getElementById('theme-light');
+    var darkRadio = document.getElementById('theme-dark');
+    if (lightRadio) {
+        lightRadio.checked = theme === 'light';
+        lightRadio.addEventListener('change', function() {
+            if (this.checked) window.setStudyBuddyTheme('light');
+        });
+    }
+    if (darkRadio) {
+        darkRadio.checked = theme === 'dark';
+        darkRadio.addEventListener('change', function() {
+            if (this.checked) window.setStudyBuddyTheme('dark');
+        });
+    }
+})();
+</script>
+</body>
+</html>

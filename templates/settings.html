@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Settings - Study Buddy AI{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1><i class="fa-solid fa-gear"></i> Settings</h1>
+    <p>Manage your account settings.</p>
+</div>
+
+<div class="card" style="max-width: 480px;">
+    <h2>Account Info</h2>
+    <div class="form-group">
+        <label>Username</label>
+        <input type="text" value="{{ user['username'] }}" disabled>
+    </div>
+</div>
+
+<div class="card" style="max-width: 480px;">
+    <h2>Theme</h2>
+    <div class="theme-options">
+        <label class="theme-option">
+            <input type="radio" name="theme" id="theme-light" value="light">
+            <span>Light Mode</span>
+        </label>
+        <label class="theme-option">
+            <input type="radio" name="theme" id="theme-dark" value="dark">
+            <span>Dark Mode</span>
+        </label>
+    </div>
+</div>
+
+<div class="card" style="max-width: 480px;">
+    <h2>Change Password</h2>
+    <form method="POST" action="{{ url_for('change_password') }}">
+        <div class="form-group">
+            <label for="current_password">Current Password</label>
+            <input type="password" id="current_password" name="current_password" required>
+        </div>
+        <div class="form-group">
+            <label for="new_password">New Password</label>
+            <input type="password" id="new_password" name="new_password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirm_new_password">Confirm New Password</label>
+            <input type="password" id="confirm_new_password" name="confirm_new_password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Password</button>
+    </form>
+</div>
+
+{% endblock %}

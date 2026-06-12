@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Profile - Study Buddy AI{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1><i class="fa-solid fa-user"></i> Your Profile</h1>
+    <p>This information helps Study Buddy AI personalize answers, study plans, and career guidance for you.</p>
+</div>
+
+<div class="card" style="max-width: 700px;">
+    <h2>Personal & Academic Details</h2>
+    <form method="POST" action="{{ url_for('profile') }}">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" value="{{ user['full_name'] or '' }}" placeholder="e.g. Rahul Sharma">
+            </div>
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="text" id="age" name="age" value="{{ user['age'] or '' }}" placeholder="e.g. 20">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="education_level">Education Level</label>
+                <select id="education_level" name="education_level">
+                    <option value="">Select level</option>
+                    {% set levels = ['School (Class 1-10)', '11th / 12th (Intermediate)', 'Diploma', 'Undergraduate (UG)', 'Postgraduate (PG)', 'Other'] %}
+                    {% for level in levels %}
+                        <option value="{{ level }}" {% if user['education_level']==level %}selected{% endif %}>{{ level }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="year">Year / Grade</label>
+                <input type="text" id="year" name="year" value="{{ user['year'] or '' }}" placeholder="e.g. 2nd Year / Class 10">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="college">College / School Name</label>
+                <input type="text" id="college" name="college" value="{{ user['college'] or '' }}" placeholder="e.g. ABC Institute of Technology">
+            </div>
+            <div class="form-group">
+                <label for="branch">Branch / Stream</label>
+                <input type="text" id="branch" name="branch" value="{{ user['branch'] or '' }}" placeholder="e.g. Computer Science Engineering">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="bio">About You (interests, goals, etc.)</label>
+            <textarea id="bio" name="bio" rows="4" placeholder="e.g. I'm interested in AI/ML and want to become a software developer...">{{ user['bio'] or '' }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Profile</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Study Planner - Study Buddy AI{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1><i class="fa-solid fa-calendar-days"></i> Study Planner</h1>
+    <p>Create personalized study schedules and revision plans based on your subjects and exam dates.</p>
+</div>
+
+<div style="margin-bottom: 22px;">
+    <a href="{{ url_for('create_study_plan') }}" class="btn btn-primary" style="width:auto; padding: 12px 24px;">
+        <i class="fa-solid fa-plus"></i> Create a New Study Plan
+    </a>
+</div>
+
+<div class="card">
+    <h2>Your Study Plans</h2>
+    {% if plans %}
+    <div class="plan-list">
+        {% for plan in plans %}
+        <div class="plan-item">
+            <div>
+                <h3>{{ plan['title'] }}</h3>
+                <p><i class="fa-solid fa-book-open"></i> {{ plan['subjects'] }} &nbsp;•&nbsp; <i class="fa-solid fa-calendar-days"></i> Exam: {{ plan['exam_date'] }}</p>
+            </div>
+            <div class="plan-item-actions">
+                <a href="{{ url_for('view_study_plan', plan_id=plan['id']) }}" class="btn btn-secondary" style="padding:8px 16px; font-size:13px;">View</a>
+                <form method="POST" action="{{ url_for('delete_study_plan', plan_id=plan['id']) }}" onsubmit="return confirm('Delete this plan?');">
+                    <button type="submit" class="btn btn-danger" style="padding:8px 16px; font-size:13px;">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="fa-solid fa-file-lines"></i></div>
+        <p>You haven't created any study plans yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

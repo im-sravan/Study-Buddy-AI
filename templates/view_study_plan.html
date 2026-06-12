@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ plan['title'] }} - Study Buddy AI{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1><i class="fa-solid fa-file-lines"></i> {{ plan['title'] }}</h1>
+    <p><i class="fa-solid fa-book-open"></i> Subjects: {{ plan['subjects'] }} &nbsp;•&nbsp; <i class="fa-solid fa-calendar-days"></i> Exam Date: {{ plan['exam_date'] }}</p>
+</div>
+
+<div style="margin-bottom: 18px;">
+    <a href="{{ url_for('study_planner') }}" class="btn btn-secondary" style="width:auto; padding: 10px 20px;">← Back to Plans</a>
+</div>
+
+<div class="card">
+    <div class="plan-content">
+        {{ plan['plan_content'] | markdown | safe }}
+    </div>
+</div>
+
+{% endblock %}

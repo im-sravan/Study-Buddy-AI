@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Home - Study Buddy AI{% endblock %}
+{% block content %}
+
+<div class="welcome-banner">
+    <h1>Welcome back, {{ user['full_name'] or user['username'] }} <i class="fa-solid fa-hand-wave"></i></h1>
+    <p>Your AI-powered student support assistant. What would you like to do today?</p>
+</div>
+
+<div class="feature-grid">
+    <a href="{{ url_for('chat_assistant') }}" class="feature-card">
+        <div class="icon"><i class="fa-solid fa-comments"></i></div>
+        <h3>Chat Assistant</h3>
+        <p>Ask anything in natural language and get instant AI-powered answers.</p>
+    </a>
+
+    <a href="{{ url_for('academic_query') }}" class="feature-card">
+        <div class="icon"><i class="fa-solid fa-book-open"></i></div>
+        <h3>Academic Queries</h3>
+        <p>Get help with subject doubts, programming questions, exam tips, or upload a PDF for summaries.</p>
+    </a>
+
+    <a href="{{ url_for('study_planner') }}" class="feature-card">
+        <div class="icon"><i class="fa-solid fa-calendar-days"></i></div>
+        <h3>Study Planner</h3>
+        <p>Enter your subjects and exam date — AI generates a personalized daily plan & revision schedule.</p>
+    </a>
+
+    <a href="{{ url_for('career_guidance') }}" class="feature-card">
+        <div class="icon"><i class="fa-solid fa-rocket"></i></div>
+        <h3>Career Guidance</h3>
+        <p>Choose your career path, get a roadmap, tech stack guidance, and job/exam reminders.</p>
+    </a>
+</div>
+
+{% endblock %}

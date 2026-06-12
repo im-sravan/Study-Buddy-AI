@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Create Study Plan - Study Buddy AI{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1><i class="fa-solid fa-plus"></i> Create a New Study Plan</h1>
+    <p>Tell Study Buddy your subjects and exam date, and AI will generate a daily schedule and revision plan.</p>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <form method="POST" action="{{ url_for('create_study_plan') }}" id="plan-form">
+        <div class="form-group">
+            <label for="title">Plan Title (optional)</label>
+            <input type="text" id="title" name="title" placeholder="e.g. Semester Final Exams Plan">
+        </div>
+        <div class="form-group">
+            <label for="subjects">Subjects</label>
+            <textarea id="subjects" name="subjects" rows="3" placeholder="e.g. Data Structures, Operating Systems, DBMS, Computer Networks" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="exam_date">Exam Date</label>
+            <input type="date" id="exam_date" name="exam_date" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="submit-btn">Generate Study Plan</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('plan-form').addEventListener('submit', function() {
+    const btn = document.getElementById('submit-btn');
+    btn.textContent = 'Generating your plan with AI...';
+    btn.disabled = true;
+});
+</script>
+
+{% endblock %}

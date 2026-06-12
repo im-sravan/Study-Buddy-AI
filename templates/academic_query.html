@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Academic Query - Study Buddy AI{% endblock %}
+{% block content %}
+
+<div class="chat-container">
+    <div class="chat-header">
+        <div>
+            <h2><i class="fa-solid fa-book-open"></i> Academic Query Support</h2>
+            <div class="chat-sub">Ask your doubt, {{ user['full_name'] or user['username'] }}, or upload a PDF/file — I'll explain or summarize it.</div>
+        </div>
+        <button class="btn btn-secondary" id="clear-chat-btn" style="padding:8px 14px; font-size:12px;">Clear Chat</button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+        {% if not history %}
+        <div class="msg assistant">
+            <div class="msg-meta">Study Buddy</div>
+            Ask your doubt, {{ user['full_name'] or user['username'] }}, or upload a PDF/image and I'll summarize or explain it for you.
+        </div>
+        {% endif %}
+        {% for h in history %}
+            <div class="msg {{ 'user' if h['role']=='user' else 'assistant' }}">
+                <div class="msg-meta">{{ 'You' if h['role']=='user' else 'Study Buddy' }}</div>
+                {{ h['message'] }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="chat-input-area">
+        <input type="file" id="file-input" style="display:none;" accept=".pdf,.png,.jpg,.jpeg,.txt,.doc,.docx">
+        <button class="icon-btn" id="attach-btn" title="Attach file"><i class="fa-solid fa-paperclip"></i></button>
+        <span id="file-name-display"></span>
+        <input type="text" id="message-input" placeholder="Ask a subject doubt, programming question, or exam tip..." autocomplete="off">
+        <button class="icon-btn send-btn" id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const chatMessages = document.getElementById('chat-messages');
+const messageInput = document.getElementById('message-input');
+const sendBtn = document.getElementById('send-btn');
+const clearBtn = document.getElementById('clear-chat-btn');
+const fileInput = document.getElementById('file-input');
+const attachBtn = document.getElementById('attach-btn');
+const fileNameDisplay = document.getElementById('file-name-display');
+
+chatMessages.scrollTop = chatMessages.scrollHeight;
+
+attachBtn.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) {
+        fileNameDisplay.textContent = fileInput.files[0].name;
+        fileNameDisplay.innerHTML = '<i class="fa-solid fa-file-lines"></i> ' + fileInput.files[0].name;
+    } else {
+        fileNameDisplay.textContent = '';
+    }
+});
+
+function addMessage(role, text) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + (role === 'user' ? 'user' : 'assistant');
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.textContent = role === 'user' ? 'You' : 'Study Buddy';
+    div.appendChild(meta);
+    div.appendChild(document.createTextNode(text));
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showTyping() {
+    const div = document.createElement('div');
+    div.className = 'typing-indicator';
+    div.id = 'typing-indicator';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function hideTyping() {
+    const el = document.getElementById('typing-indicator');
+    if (el) el.remove();
+}
+
+async function sendMessage() {
+    const text = messageInput.value.trim();
+    const file = fileInput.files[0];
+    if (!text && !file) return;
+
+    let displayText = text;
+    if (file) displayText = (text ? text + ' ' : '') + '[Uploaded file: ' + file.name + ']';
+    addMessage('user', displayText);
+
+    const formData = new FormData();
+    formData.append('message', text);
+    if (file) formData.append('file', file);
+
+    messageInput.value = '';
+    fileInput.value = '';
+    fileNameDisplay.textContent = '';
+    showTyping();
+
+    try {
+        const res = await fetch('/api/academic-query', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        hideTyping();
+        if (data.reply) {
+            addMessage('assistant', data.reply);
+        } else {
+            addMessage('assistant', data.error || 'Sorry, something went wrong.');
+        }
+    } catch (e) {
+        hideTyping();
+        addMessage('assistant', 'Network error. Please try again.');
+    }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+});
+
+clearBtn.addEventListener('click', async () => {
+    if (!confirm('Clear all chat history?')) return;
+    await fetch('/api/clear-chat/academic_query', {method: 'POST'});
+    location.reload();
+});
+</script>
+{% endblock %}

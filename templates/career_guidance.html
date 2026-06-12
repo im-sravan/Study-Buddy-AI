@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Career Guidance - Study Buddy AI{% endblock %}
+{% block content %}
+
+<div class="chat-container">
+    <div class="chat-header">
+        <div>
+            <h2><i class="fa-solid fa-rocket"></i> Career Guidance</h2>
+            <div class="chat-sub">Wanna choose your career path, {{ user['full_name'] or user['username'] }}?</div>
+        </div>
+        <button class="btn btn-secondary" id="clear-chat-btn" style="padding:8px 14px; font-size:12px;">Clear Chat</button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+        {% if not history %}
+        <div class="msg assistant">
+            <div class="msg-meta">Study Buddy</div>
+            Wanna choose your career path, {{ user['full_name'] or user['username'] }}? Tell me your interests and I'll help you build a roadmap, suggest tech stacks, and guide you toward your goals!
+        </div>
+        {% endif %}
+        {% for h in history %}
+            <div class="msg {{ 'user' if h['role']=='user' else 'assistant' }}">
+                <div class="msg-meta">{{ 'You' if h['role']=='user' else 'Study Buddy' }}</div>
+                {{ h['message'] }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="chat-input-area">
+        <input type="text" id="message-input" placeholder="e.g. I'm interested in AI/ML, what should I learn?" autocomplete="off">
+        <button class="icon-btn send-btn" id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const chatMessages = document.getElementById('chat-messages');
+const messageInput = document.getElementById('message-input');
+const sendBtn = document.getElementById('send-btn');
+const clearBtn = document.getElementById('clear-chat-btn');
+
+chatMessages.scrollTop = chatMessages.scrollHeight;
+
+function addMessage(role, text) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + (role === 'user' ? 'user' : 'assistant');
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.textContent = role === 'user' ? 'You' : 'Study Buddy';
+    div.appendChild(meta);
+    div.appendChild(document.createTextNode(text));
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showTyping() {
+    const div = document.createElement('div');
+    div.className = 'typing-indicator';
+    div.id = 'typing-indicator';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function hideTyping() {
+    const el = document.getElementById('typing-indicator');
+    if (el) el.remove();
+}
+
+async function sendMessage() {
+    const text = messageInput.value.trim();
+    if (!text) return;
+    addMessage('user', text);
+    messageInput.value = '';
+    showTyping();
+
+    try {
+        const res = await fetch('/api/career-guidance', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({message: text})
+        });
+        const data = await res.json();
+        hideTyping();
+        if (data.reply) {
+            addMessage('assistant', data.reply);
+        } else {
+            addMessage('assistant', 'Sorry, something went wrong.');
+        }
+    } catch (e) {
+        hideTyping();
+        addMessage('assistant', 'Network error. Please try again.');
+    }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+});
+
+clearBtn.addEventListener('click', async () => {
+    if (!confirm('Clear all chat history?')) return;
+    await fetch('/api/clear-chat/career_guidance', {method: 'POST'});
+    location.reload();
+});
+</script>
+{% endblock %}
