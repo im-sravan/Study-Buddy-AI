@@ -5,3 +5,4 @@ Markdown==3.6
 PyPDF2==3.0.1
 python-dotenv==1.0.0
 gunicorn 
+protobuf==4.25.3
