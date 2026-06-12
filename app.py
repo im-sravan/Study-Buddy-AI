@@ -329,6 +329,10 @@ def change_password():
 @login_required
 def chat_assistant():
     user = get_current_user()
+
+    if not user:
+        return redirect(url_for('login'))
+    
     history = get_chat_history(user['id'], 'chat_assistant')
     return render_template('chat_assistant.html', user=user, history=history)
 
