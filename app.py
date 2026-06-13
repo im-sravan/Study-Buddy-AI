@@ -5,7 +5,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-#import google.generativeai as genai
+import google.generativeai as genai
 import markdown as md
 from dotenv import load_dotenv
 
